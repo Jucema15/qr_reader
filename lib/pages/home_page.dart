@@ -95,7 +95,7 @@ class _HomePageBody extends StatelessWidget {
         return OtraPage();
 
       default:
-        return MapasPage();
+        return OtraPage();
     }
 
 

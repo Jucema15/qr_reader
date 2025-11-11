@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '../database/db_helper.dart';
+import '../database/data_provider.dart';
 import 'register_page.dart';
+import 'home_page.dart'; // Importa tu HomePage
+import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,17 +15,25 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passCtrl = TextEditingController();
   String _error = '';
 
+  String hashContrasena(String contrasena) {
+    final bytes = utf8.encode(contrasena);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
   Future<void> _login() async {
-    final usuarios = await DBHelper.getUsuarios();
-    final user = usuarios.firstWhere(
-      (u) => u['nombre'] == _userCtrl.text && u['contrasena'] == _passCtrl.text,
-      orElse: () => {},
-    );
-    if (user.isNotEmpty) {
+    final usuario = _userCtrl.text.trim();
+    final contrasena = _passCtrl.text;
+    if (usuario.isEmpty || contrasena.isEmpty) {
+      setState(() => _error = 'Completa todos los campos');
+      return;
+    }
+    final contrasenaCifrada = hashContrasena(contrasena);
+    final user = await DataProvider.findUsuario(usuario, contrasenaCifrada);
+    if (user != null) {
       setState(() => _error = '');
-      // Navega a la pantalla principal o dashboard
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => HomePage(username: user['nombre']))
+        MaterialPageRoute(builder: (_) => const HomePage()) // Usar tu HomePage real
       );
     } else {
       setState(() => _error = 'Usuario o contraseña incorrectos');
@@ -59,21 +70,6 @@ class _LoginPageState extends State<LoginPage> {
               Text(_error, style: TextStyle(color: Colors.red)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Página de ejemplo de bienvenida
-class HomePage extends StatelessWidget {
-  final String username;
-  const HomePage({required this.username});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Bienvenido')),
-      body: Center(
-        child: Text('Bienvenido, $username!', style: TextStyle(fontSize: 22)),
       ),
     );
   }
