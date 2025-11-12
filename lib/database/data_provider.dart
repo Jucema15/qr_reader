@@ -44,4 +44,33 @@ class DataProvider {
       return await DBHelper.findUsuario(nombre, contrasena);
     }
   }
+
+  static Future<int?> getUsuarioIdByNombre(String nombre) async {
+    if (kIsWeb) return null;
+    return await DBHelper.getUsuarioIdByNombre(nombre);
+  }
+
+  static Future<int?> insertGeolocalizacion({
+    required int usuarioId,
+    required double origenLat,
+    required double origenLng,
+    required double destinoLat,
+    required double destinoLng,
+    required String fecha,
+  }) async {
+    if (kIsWeb) return null;
+    return await DBHelper.insertGeolocalizacion(
+      usuarioId: usuarioId,
+      origenLat: origenLat,
+      origenLng: origenLng,
+      destinoLat: destinoLat,
+      destinoLng: destinoLng,
+      fecha: fecha,
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getGeolocalizacionesByUsuario(int usuarioId) async {
+    if (kIsWeb) return [];
+    return await DBHelper.getGeolocalizacionesByUsuario(usuarioId);
+  }
 }

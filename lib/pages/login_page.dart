@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_reader/database/user_session.dart';
 import '../database/data_provider.dart';
 import 'register_page.dart';
 import 'home_page.dart'; // Importa tu HomePage
@@ -22,23 +23,24 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    final usuario = _userCtrl.text.trim();
-    final contrasena = _passCtrl.text;
-    if (usuario.isEmpty || contrasena.isEmpty) {
-      setState(() => _error = 'Completa todos los campos');
-      return;
-    }
-    final contrasenaCifrada = hashContrasena(contrasena);
-    final user = await DataProvider.findUsuario(usuario, contrasenaCifrada);
-    if (user != null) {
-      setState(() => _error = '');
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const HomePage()) // Usar tu HomePage real
-      );
-    } else {
-      setState(() => _error = 'Usuario o contraseña incorrectos');
-    }
+  final usuario = _userCtrl.text.trim();
+  final contrasena = _passCtrl.text;
+  if (usuario.isEmpty || contrasena.isEmpty) {
+    setState(() => _error = 'Completa todos los campos');
+    return;
   }
+  final contrasenaCifrada = hashContrasena(contrasena);
+  final user = await DataProvider.findUsuario(usuario, contrasenaCifrada);
+  if (user != null) {
+    UserSession.setUsername(usuario); // <--- Guardar usuario logeado
+    setState(() => _error = '');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const HomePage())
+    );
+  } else {
+    setState(() => _error = 'Usuario o contraseña incorrectos');
+  }
+}
 
   @override
   Widget build(BuildContext context) {

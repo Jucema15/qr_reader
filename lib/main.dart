@@ -6,8 +6,10 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:qr_reader/pages/login_page.dart';
 import 'package:qr_reader/providers/ui_provider.dart';
 import 'package:qr_reader/providers/scan_list_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
   // WEB/MÓVIL: usa Hive para persistencia

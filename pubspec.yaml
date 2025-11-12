@@ -46,6 +46,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.6
   sqflite_common_ffi_web: ^1.0.1+2
   hive_flutter: ^1.1.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +64,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+      - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

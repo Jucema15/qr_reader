@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'mapa_page.dart';
 
 class QRScannerPage extends StatefulWidget {
   const QRScannerPage({super.key});
@@ -14,7 +16,6 @@ class _QRScannerPageState extends State<QRScannerPage> {
   QRViewController? controller;
   String? scannedData;
 
-  // Fix hot reload for camera on Android/iOS
   @override
   void reassemble() {
     super.reassemble();
@@ -49,9 +50,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
             flex: 1,
             child: Center(
               child: Text(
-                scannedData != null
-                    ? 'Scanned: $scannedData'
-                    : 'Scan a code',
+                scannedData != null ? 'Scanned: $scannedData' : 'Scan a code',
                 style: const TextStyle(fontSize: 18),
               ),
             ),
@@ -64,16 +63,28 @@ class _QRScannerPageState extends State<QRScannerPage> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
 
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async {
       setState(() {
         scannedData = scanData.code;
       });
 
-      // Optional: stop scanning after first result
-      controller.pauseCamera();
-
-      // Example: Navigate back with result
-      Navigator.pop(context, scannedData);
+      LatLng? latLng = parseLatLng(scanData.code ?? "");
+      if (latLng != null) {
+        controller.pauseCamera();
+        // Navegar al mapa con la ubicación recibida por QR
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MapaPage(latLng: latLng),
+          ),
+        );
+      } else {
+        // Mostrar error si el QR no contiene coordenadas válidas
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('QR no contiene coordenadas válidas')),
+        );
+        controller.resumeCamera();
+      }
     });
   }
 
@@ -82,4 +93,17 @@ class _QRScannerPageState extends State<QRScannerPage> {
     controller?.dispose();
     super.dispose();
   }
+}
+
+// Función para parsear latitud y longitud desde el QR
+LatLng? parseLatLng(String value) {
+  final geoPrefix = 'geo:';
+  String coords = value.startsWith(geoPrefix) ? value.substring(geoPrefix.length) : value;
+  final parts = coords.split(',');
+  if (parts.length == 2) {
+    final lat = double.tryParse(parts[0].trim());
+    final lng = double.tryParse(parts[1].trim());
+    if (lat != null && lng != null) return LatLng(lat, lng);
+  }
+  return null;
 }
