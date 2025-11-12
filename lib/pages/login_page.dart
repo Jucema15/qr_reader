@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_reader/database/user_session.dart';
 import '../database/data_provider.dart';
 import 'register_page.dart';
-import 'home_page.dart'; // Importa tu HomePage
+import 'home_page.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 
@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   final contrasenaCifrada = hashContrasena(contrasena);
   final user = await DataProvider.findUsuario(usuario, contrasenaCifrada);
   if (user != null) {
-    UserSession.setUsername(usuario); // <--- Guardar usuario logeado
+    UserSession.setUsername(usuario); 
     setState(() => _error = '');
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const HomePage())

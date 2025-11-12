@@ -1,49 +1,4 @@
-// To parse this JSON data, do
-//
-//     final scanModel = scanModelFromJson(jsonString);
-
-/*
-https://app.quicktype.io/
-
-{
-  "id": 1,
-  "tipo": "http",
-  "valor":"unvalor"
-}
-*/
-
-/*
 import 'dart:convert';
-
-ScanModel scanModelFromJson(String str) => ScanModel.fromJson(json.decode(str));
-
-String scanModelToJson(ScanModel data) => json.encode(data.toJson());
-
-class ScanModel {
-  int id;
-  String tipo;
-  String valor;
-
-  ScanModel({required this.id, required this.tipo, required this.valor}) {
-    if (valor.contains('http')) {
-      tipo = 'http';
-    } else {
-      tipo = 'geo';
-    }
-  }
-
-  
-
-  factory ScanModel.fromJson(Map<String, dynamic> json) =>
-      ScanModel(id: json["id"], tipo: json["tipo"], valor: json["valor"]);
-
-  Map<String, dynamic> toJson() => {"id": id, "tipo": tipo, "valor": valor};
-}
-*/
-
-import 'dart:convert';
-//import 'package:meta/meta.dart';
-//import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' show LatLng;
 
 ScanModel scanModelFromJson(String str) => ScanModel.fromJson(json.decode(str));

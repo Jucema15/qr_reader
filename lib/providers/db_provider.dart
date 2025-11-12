@@ -13,20 +13,19 @@ class DBProvider {
   DBProvider._();
 
   Future<Database> get database async {
-    //if(_database != null) return _database;
-
+    
     _database = await initDB();
 
     return _database;
   }
 
   Future<Database> initDB() async {
-    // Path de donde almacenaremos la base de datos
+    
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, 'ScansDB.db');
     print(path);
 
-    // Crear base de datos
+
     return await openDatabase(
       path,
       version: 1,
@@ -44,16 +43,9 @@ class DBProvider {
   }
 
   Future<Database> initDB1() async {
-    // Path de donde almacenaremos la base de datos
-    //Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    //final path = join(documentsDirectory.path, 'ScansDB.db');
-    //print(path);
-
-    // Get a location using getDatabasesPath
     var databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'ScansDB.db');
 
-    // Crear base de datos
     return await openDatabase(
       path,
       version: 1,
@@ -75,7 +67,6 @@ class DBProvider {
     final tipo = nuevoScan.tipo;
     final valor = nuevoScan.valor;
 
-    // Verificar la base de datos
     final db = await database;
 
     final res = await db.rawInsert('''
@@ -90,7 +81,6 @@ class DBProvider {
     final db = await database;
     final res = await db.insert('Scans', nuevoScan.toJson());
 
-    // Es el ID del último registro insertado;
     return res;
   }
 

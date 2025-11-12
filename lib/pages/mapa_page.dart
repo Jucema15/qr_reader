@@ -5,12 +5,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:qr_reader/database/data_provider.dart';
 import 'package:qr_reader/database/user_session.dart';
 
 class MapaPage extends StatefulWidget {
-  final LatLng? latLng; // ubicación destino (por QR)
-  final LatLng? origen; // opcional: para historial (guardar la ruta real)
+  final LatLng? latLng; 
+  final LatLng? origen; 
   const MapaPage({Key? key, this.latLng, this.origen}) : super(key: key);
 
   @override
@@ -25,14 +24,13 @@ class _MapaPageState extends State<MapaPage> {
   Set<Polyline> _polylines = {};
   String? _errorMsg;
   bool _isLoadingRoute = false;
+  bool _rutaHistorial = false;
 
   final String googleAPIKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
-  bool _rutaHistorial = false;
 
   @override
   void initState() {
     super.initState();
-    // Si la página se usa para mostrar una ruta guardada, utiliza los datos del historial
     if (widget.origen != null && widget.latLng != null) {
       _currentLocation = widget.origen;
       _rutaHistorial = true;
@@ -98,7 +96,6 @@ class _MapaPageState extends State<MapaPage> {
             infoWindow: const InfoWindow(title: 'Destino QR'),
           ));
         }
-        // Guarda la ruta tras trazarla si vienes de escaneo
         _loadRouteReal();
       });
     } catch (e) {
@@ -135,23 +132,9 @@ class _MapaPageState extends State<MapaPage> {
         };
         _isLoadingRoute = false;
       });
-      // Si es un escaneo (no historial), guarda registro
-      if (!_rutaHistorial) await _saveGeoLog();
-    } catch (e) {
-      setState(() {
-        _errorMsg = 'No se pudo obtener la ruta real: ${e.toString()}';
-        _isLoadingRoute = false;
-      });
-    }
-  }
-
-  Future<void> _saveGeoLog() async {
-    final username = UserSession.username;
-    if (username != null && _currentLocation != null && widget.latLng != null) {
-      final usuarioId = await DataProvider.getUsuarioIdByNombre(username);
-      if (usuarioId != null) {
-        await DataProvider.insertGeolocalizacion(
-          usuarioId: usuarioId,
+      
+      if (!_rutaHistorial && _currentLocation != null && widget.latLng != null) {
+        UserSession.addReciente(
           origenLat: _currentLocation!.latitude,
           origenLng: _currentLocation!.longitude,
           destinoLat: widget.latLng!.latitude,
@@ -159,6 +142,11 @@ class _MapaPageState extends State<MapaPage> {
           fecha: DateTime.now().toIso8601String(),
         );
       }
+    } catch (e) {
+      setState(() {
+        _errorMsg = 'No se pudo obtener la ruta real: ${e.toString()}';
+        _isLoadingRoute = false;
+      });
     }
   }
 
@@ -247,7 +235,7 @@ class _MapaPageState extends State<MapaPage> {
   }
 }
 
-// Consulta Directions API (modo walking, puedes cambiar a driving)
+
 Future<List<LatLng>> getRouteCoordinates(LatLng origin, LatLng destination, String apiKey) async {
   String url =
       'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}'
@@ -262,7 +250,7 @@ Future<List<LatLng>> getRouteCoordinates(LatLng origin, LatLng destination, Stri
   return decodePolyline(overviewPolyline);
 }
 
-// Decodifica la polilínea generada por la Directions API
+
 List<LatLng> decodePolyline(String polyline) {
   List<LatLng> points = [];
   int index = 0, len = polyline.length;

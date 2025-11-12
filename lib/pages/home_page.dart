@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_reader/pages/direcciones_page.dart';
+import 'package:qr_reader/pages/historial_page.dart';
 import 'package:qr_reader/pages/mapa_page.dart';
-import 'package:qr_reader/pages/otras_opciones_page.dart';
 import 'package:qr_reader/providers/scan_list_provider.dart';
 import 'package:qr_reader/providers/ui_provider.dart';
 import 'package:qr_reader/widgets/custom_navigatorbar.dart';
@@ -57,16 +57,16 @@ class _HomePageBody extends StatelessWidget {
     switch( currentIndex ) {
 
       case 0:
-        return MapaPage();
-
-      case 1: 
         return DireccionesPage();
 
+      case 1: 
+        return MapaPage();
+
       case 2: 
-        return OtraPage();
+        return HistorialPage();
 
       default:
-        return OtraPage();
+        return DireccionesPage();
     }
 
 

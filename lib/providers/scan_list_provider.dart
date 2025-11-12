@@ -10,7 +10,6 @@ class ScanListProvider extends ChangeNotifier {
 
     final nuevoScan = ScanModel(valor: valor, id: 0, tipo: '');
     final id = await DBProvider.db.nuevoScan(nuevoScan);
-    // Asignar el ID de la base de datos al modelo
     nuevoScan.id = id;
 
     if ( tipoSeleccionado == nuevoScan.tipo ) {

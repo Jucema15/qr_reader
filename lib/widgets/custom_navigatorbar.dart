@@ -12,13 +12,9 @@ class CustomNavigatorbar extends StatelessWidget {
     
     final currentIndex = uiProvider.selectedMenuOpt;
 
-
-
-    //return const Placeholder();
     return BottomNavigationBar(
 
       onTap: ( int i ) => uiProvider.selectedMenuOpt = i,
-      //currentIndex: 0,
       currentIndex: currentIndex ,
       elevation: 0,
 
@@ -34,8 +30,8 @@ class CustomNavigatorbar extends StatelessWidget {
         ),
 
         BottomNavigationBarItem(
-          icon: Icon(Icons.pedal_bike),
-          label: 'Otra Opcion',
+          icon: Icon(Icons.schedule),
+          label: 'Historial',
         ),
  
 

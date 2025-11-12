@@ -12,7 +12,6 @@ void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
 
-  // WEB/MÓVIL: usa Hive para persistencia
   if (kIsWeb ||
       defaultTargetPlatform == TargetPlatform.android ||
       defaultTargetPlatform == TargetPlatform.iOS) {
@@ -20,12 +19,10 @@ void main() async {
     await Hive.openBox('usuarios');
   }
   
-  // ESCRITORIO: usa SQLite
   if (defaultTargetPlatform == TargetPlatform.windows ||
       defaultTargetPlatform == TargetPlatform.linux ||
       defaultTargetPlatform == TargetPlatform.macOS) {
     sqfliteFfiInit();
-    // Opcional: inicializa otros providers de DB aquí si lo necesitas
   }
 
   runApp(

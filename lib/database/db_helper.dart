@@ -15,7 +15,7 @@ class DBHelper {
     String path = join(dbPath, 'qr_reader.db');
     return await openDatabase(
       path,
-      version: 2, // sube versión si cambias estructura
+      version: 2, 
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE usuario (
@@ -38,7 +38,6 @@ class DBHelper {
         ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        // Si ya tienes la tabla y quieres migrar
         if (oldVersion < 2) {
           await db.execute('''
             ALTER TABLE geolocalizacion ADD COLUMN origen_lat REAL;
